@@ -10,8 +10,12 @@ from pygame.locals import (
     QUIT
 )
 
+
 class Player(pygame.sprite.Sprite):
+
     def __init__(self):
+        self.SCREEN_WIDTH = 800
+        self.SCREEN_HEIGHT = 600
         super(Player, self).__init__()
         self.surface = pygame.Surface((75, 25))
         self.surface.fill((255, 255, 255))
@@ -27,3 +31,16 @@ class Player(pygame.sprite.Sprite):
             self.rectangle.move_ip(-5, 0)
         if pressed_keys[K_RIGHT]:
             self.rectangle.move_ip(5, 0)
+
+        """Keep the object on the screen"""
+        if self.rectangle.left < 0:
+            self.rectangle.left = 0
+
+        if self.rectangle.right > self.SCREEN_WIDTH:
+            self.rectangle.right = self.SCREEN_WIDTH
+
+        if self.rectangle.top <= 0:
+            self.rectangle.top = 0
+
+        if self.rectangle.bottom >= self.SCREEN_HEIGHT:
+            self.rectangle.bottom = self.SCREEN_HEIGHT

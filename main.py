@@ -15,15 +15,11 @@ from pygame.locals import (
 
 pygame.init()
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-
-# Create the screen object
-# The size is determined by the constant SCREEN_WIDTH and SCREEN_HEIGHT
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-
 # This object is created from the player class that inherits from Player Main class
 player = Player()
+# Create the screen object
+# The size is determined by the constant SCREEN_WIDTH and SCREEN_HEIGHT
+screen = pygame.display.set_mode((player.SCREEN_WIDTH, player.SCREEN_HEIGHT))
 
 running = True
 
