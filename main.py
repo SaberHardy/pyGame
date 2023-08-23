@@ -37,6 +37,9 @@ while running:
         elif event.type == QUIT:
             running = False
 
+    # This will return a set of keys and check for user input
+    pressed_keys = pygame.key.get_pressed()
+    player.update(pressed_keys)
     # Turn the screen from black(Default color) to White color
     # screen.fill((255, 255, 255))
     #
