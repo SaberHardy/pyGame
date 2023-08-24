@@ -1,5 +1,7 @@
 import pygame
-from classes.player import Player
+
+from classes.enemy import Enemy
+from classes.player_user import Player
 
 # Import keys to control the game
 from pygame.locals import (
@@ -15,11 +17,19 @@ from pygame.locals import (
 
 pygame.init()
 
+ADDENEMY = pygame.USEREVENT + 1
+pygame.time.set_timer(ADDENEMY, 250)
+
 # This object is created from the player class that inherits from Player Main class
 player = Player()
 # Create the screen object
 # The size is determined by the constant SCREEN_WIDTH and SCREEN_HEIGHT
 screen = pygame.display.set_mode((player.SCREEN_WIDTH, player.SCREEN_HEIGHT))
+
+enemies = pygame.sprite.Group()
+
+all_sprites = pygame.sprite.Group()
+all_sprites.add(player)
 
 running = True
 
@@ -33,9 +43,16 @@ while running:
         elif event.type == QUIT:
             running = False
 
+        elif event.type == ADDENEMY:
+            new_enemy = Enemy()
+            enemies.add(new_enemy)
+            all_sprites.add(new_enemy)
+
     # This will return a set of keys and check for user input
     pressed_keys = pygame.key.get_pressed()
     player.update(pressed_keys)
+
+    enemies.update()
     # Turn the screen from black(Default color) to White color
     # screen.fill((255, 255, 255))
     #
@@ -45,6 +62,9 @@ while running:
     screen.fill((0, 0, 0))
     # rectangle = surface.get_rect()
 
+    # Draw all spirites
+    for entity in all_sprites:
+        screen.blit(entity.surface, entity.rectangle)
     # surface_center = (
     #     (SCREEN_WIDTH - surface.get_width()) / 2,
     #     (SCREEN_HEIGHT - surface.get_height()) / 2)

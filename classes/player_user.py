@@ -14,9 +14,9 @@ from pygame.locals import (
 class Player(pygame.sprite.Sprite):
 
     def __init__(self):
+        super(Player, self).__init__()
         self.SCREEN_WIDTH = 800
         self.SCREEN_HEIGHT = 600
-        super(Player, self).__init__()
         self.surface = pygame.Surface((75, 25))
         self.surface.fill((255, 255, 255))
         print('user printed')
@@ -44,3 +44,4 @@ class Player(pygame.sprite.Sprite):
 
         if self.rectangle.bottom >= self.SCREEN_HEIGHT:
             self.rectangle.bottom = self.SCREEN_HEIGHT
+
