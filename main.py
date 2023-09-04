@@ -58,23 +58,27 @@ while running:
     #
     # surface = pygame.Surface((100, 100))
     #
-    # Fill the small rectangle with black color
+    # Fill the small rect with black color
     screen.fill((0, 0, 0))
-    # rectangle = surface.get_rect()
+    # rect = surface.get_rect()
 
-    # Draw all spirites
+    # Draw all sprites
     for entity in all_sprites:
-        screen.blit(entity.surface, entity.rectangle)
+        screen.blit(entity.surface, entity.rect)
     # surface_center = (
     #     (SCREEN_WIDTH - surface.get_width()) / 2,
     #     (SCREEN_HEIGHT - surface.get_height()) / 2)
 
-    # This line will display the rectangle from Top left corner
-    screen.blit(player.surface, player.rectangle)
+    if pygame.sprite.spritecollideany(player, enemies):
+        player.kill()
+        running = False
 
-    # This will display the rectangle in the center of the screen
+    # This line will display the rect from Top left corner
+    screen.blit(player.surface, player.rect)
+
+    # This will display the rect in the center of the screen
     # screen.blit(player.surface, surface_center)
 
     pygame.display.flip()
 
-# User Input
+# Collision Detection

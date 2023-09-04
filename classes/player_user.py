@@ -20,28 +20,28 @@ class Player(pygame.sprite.Sprite):
         self.surface = pygame.Surface((75, 25))
         self.surface.fill((255, 255, 255))
         print('user printed')
-        self.rectangle = self.surface.get_rect()
+        self.rect = self.surface.get_rect()
 
     def update(self, pressed_keys):
         if pressed_keys[K_UP]:
-            self.rectangle.move_ip(0, -5)
+            self.rect.move_ip(0, -5)
         if pressed_keys[K_DOWN]:
-            self.rectangle.move_ip(0, 5)
+            self.rect.move_ip(0, 5)
         if pressed_keys[K_LEFT]:
-            self.rectangle.move_ip(-5, 0)
+            self.rect.move_ip(-5, 0)
         if pressed_keys[K_RIGHT]:
-            self.rectangle.move_ip(5, 0)
+            self.rect.move_ip(5, 0)
 
         """Keep the object on the screen"""
-        if self.rectangle.left < 0:
-            self.rectangle.left = 0
+        if self.rect.left < 0:
+            self.rect.left = 0
 
-        if self.rectangle.right > self.SCREEN_WIDTH:
-            self.rectangle.right = self.SCREEN_WIDTH
+        if self.rect.right > self.SCREEN_WIDTH:
+            self.rect.right = self.SCREEN_WIDTH
 
-        if self.rectangle.top <= 0:
-            self.rectangle.top = 0
+        if self.rect.top <= 0:
+            self.rect.top = 0
 
-        if self.rectangle.bottom >= self.SCREEN_HEIGHT:
-            self.rectangle.bottom = self.SCREEN_HEIGHT
+        if self.rect.bottom >= self.SCREEN_HEIGHT:
+            self.rect.bottom = self.SCREEN_HEIGHT
 
