@@ -1,5 +1,6 @@
 import pygame
 from pygame.locals import (
+    RLEACCEL,
     K_UP,
     K_DOWN,
     K_LEFT,
@@ -17,6 +18,8 @@ class Player(pygame.sprite.Sprite):
         super(Player, self).__init__()
         self.SCREEN_WIDTH = 800
         self.SCREEN_HEIGHT = 600
+        self.surface = pygame.image.load('/Users/macbook/PycharmProjects/DjangoProjs/pyGame/classes/jet.png').convert()
+        self.surface.set_colorkey((255, 255, 255), RLEACCEL)
         self.surface = pygame.Surface((75, 25))
         self.surface.fill((255, 255, 255))
         print('user printed')
@@ -44,4 +47,3 @@ class Player(pygame.sprite.Sprite):
 
         if self.rect.bottom >= self.SCREEN_HEIGHT:
             self.rect.bottom = self.SCREEN_HEIGHT
-
