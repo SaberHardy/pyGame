@@ -13,7 +13,7 @@ BG_COLOR = (255, 255, 255)
 
 WIDTH, HEIGHT = 1000, 600
 FPS = 60
-PLAYER_VEL = 5
+PLAYER_VEL = 6
 
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 
@@ -55,6 +55,8 @@ class Player(pygame.sprite.Sprite):
                                  32, 32,
                                  True)
 
+    ANIMATION_DELAY = 5
+
     def __init__(self, x, y, width, height):
         self.rect = pygame.Rect(x, y, width, height)
         self.x_val = 0
@@ -87,11 +89,24 @@ class Player(pygame.sprite.Sprite):
         self.move(self.x_val, self.y_val)
         self.fall_count += 1
 
+        self.update_sprite()
+
     def draw(self, window):
         # pygame.draw.rect(window, self.COLOR, self.rect)
 
-        self.sprite = self.SPRITES['idle_' + self.direction][0]
+        # self.sprite = self.SPRITES['idle_' + self.direction][0]
         window.blit(self.sprite, (self.rect.x, self.rect.y))
+
+    def update_sprite(self):
+        sprite_sheet = 'idle'
+        if self.x_val != 0:
+            sprite_sheet = "run"
+
+        sprite_sheet_name = sprite_sheet + "_" + self.direction
+        sprites = self.SPRITES[sprite_sheet_name]
+        sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
+        self.sprite = sprites[sprite_index]
+        self.animation_count += 1
 
 
 def get_background(name):
