@@ -13,7 +13,7 @@ BG_COLOR = (255, 255, 255)
 
 WIDTH, HEIGHT = 1000, 600
 FPS = 60
-PLAYER_VEL = 6
+PLAYER_VEL = 4
 
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 
@@ -58,6 +58,7 @@ class Player(pygame.sprite.Sprite):
     ANIMATION_DELAY = 5
 
     def __init__(self, x, y, width, height):
+        self.sprite = None
         self.rect = pygame.Rect(x, y, width, height)
         self.x_val = 0
         self.y_val = 0
@@ -97,6 +98,13 @@ class Player(pygame.sprite.Sprite):
         # self.sprite = self.SPRITES['idle_' + self.direction][0]
         window.blit(self.sprite, (self.rect.x, self.rect.y))
 
+    # update the rectangle that bounds the character based on the sprite that we're showing
+    def update(self):
+        self.rect = self.sprite.get_rect(topleft=(self.rect.x, self.rect.y))
+        # Do the mask: the masking is for mapping of all the pixels that exist in the Sprite
+        # Any pixels perform on them perfect collision because we can overlap it with another mask
+        self.mask = pygame.mask.from_surface(self.sprite)
+
     def update_sprite(self):
         sprite_sheet = 'idle'
         if self.x_val != 0:
@@ -107,6 +115,8 @@ class Player(pygame.sprite.Sprite):
         sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
         self.sprite = sprites[sprite_index]
         self.animation_count += 1
+
+        self.update()
 
 
 def get_background(name):
