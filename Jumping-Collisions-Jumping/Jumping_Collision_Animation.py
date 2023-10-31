@@ -20,6 +20,7 @@ window = pygame.display.set_mode((WIDTH, HEIGHT))
 
 class Player(pygame.sprite.Sprite):
     COLOR = (255, 0, 0)
+    GRAVITY = 1
 
     def __init__(self, x, y, width, height):
         self.rect = pygame.Rect(x, y, width, height)
@@ -28,6 +29,7 @@ class Player(pygame.sprite.Sprite):
         self.mask = None
         self.direction = "left"
         self.animation_count = 0
+        self.fall_count = 0
 
     def move(self, dx, dy):
         self.rect.x += dx
@@ -40,15 +42,17 @@ class Player(pygame.sprite.Sprite):
             self.animation_count = 0
 
     def move_right(self, vel):
-        self.x_vel = vel
+        self.x_val = vel
         if self.direction != "right":
             self.direction = "right"
             self.animation_count = 0
 
     # This will call once every frame
     def loop(self, fps):
+        self.y_val += min(1, (self.fall_count / fps) * self.GRAVITY)
+        # moving the item
         self.move(self.x_val, self.y_val)
-        # update the mask
+        self.fall_count += 1
 
     def draw(self, window):
         pygame.draw.rect(window, self.COLOR, self.rect)
@@ -76,6 +80,17 @@ def draw(widow, background, bg_image, player):
     pygame.display.update()
 
 
+def handle_move(player):
+    keys = pygame.key.get_pressed()
+    player.x_val = 0
+
+    if keys[pygame.K_LEFT]:
+        player.move_left(PLAYER_VEL)
+
+    if keys[pygame.K_RIGHT]:
+        player.move_right(PLAYER_VEL)
+
+
 def main(window):
     clock = pygame.time.Clock()
     background, bg_img = get_background("Purple.png")
@@ -92,6 +107,8 @@ def main(window):
                 run = False
                 break
 
+        player.loop(FPS)
+        handle_move(player)
         draw(window, background, bg_img, player)
 
 
