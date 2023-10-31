@@ -26,15 +26,22 @@ def get_background(name):
 
     for i in range(WIDTH // width + 1):
         for j in range(HEIGHT // height + 1):
-            position = [i * width, j * height]
+            position = (i * width, j * height)
             tiles.append(position)
 
     return tiles, image
 
 
+def draw(widow, background, bg_image):
+    for tile in background:
+        widow.blit(bg_image, tile)
+
+    pygame.display.update()
+
+
 def main(window):
     clock = pygame.time.Clock()
-    background, bg_img = get_background("Blue.png")
+    background, bg_img = get_background("Purple.png")
 
     run = True
 
@@ -45,6 +52,8 @@ def main(window):
             if event.type == pygame.QUIT:
                 run = False
                 break
+
+        draw(window, background, bg_img)
 
 
 if __name__ == "__main__":
