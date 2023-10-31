@@ -11,11 +11,47 @@ pygame.display.set_caption("2DGame")
 
 BG_COLOR = (255, 255, 255)
 
-WIDTH, HEIGHT = 1000, 800
+WIDTH, HEIGHT = 1000, 600
 FPS = 60
 PLAYER_VEL = 5
 
 window = pygame.display.set_mode((WIDTH, HEIGHT))
+
+
+class Player(pygame.sprite.Sprite):
+    COLOR = (255, 0, 0)
+
+    def __init__(self, x, y, width, height):
+        self.rect = pygame.Rect(x, y, width, height)
+        self.x_val = 0
+        self.y_val = 0
+        self.mask = None
+        self.direction = "left"
+        self.animation_count = 0
+
+    def move(self, dx, dy):
+        self.rect.x += dx
+        self.rect.y += dy
+
+    def move_left(self, vel):
+        self.x_val = -vel
+        if self.direction != "left":
+            self.direction = "left"
+            self.animation_count = 0
+
+    def move_right(self, vel):
+        self.x_vel = vel
+        if self.direction != "right":
+            self.direction = "right"
+            self.animation_count = 0
+
+    # This will call once every frame
+    def loop(self, fps):
+        self.move(self.x_val, self.y_val)
+        # update the mask
+
+    def draw(self, window):
+        pygame.draw.rect(window, self.COLOR, self.rect)
 
 
 def get_background(name):
@@ -32,16 +68,19 @@ def get_background(name):
     return tiles, image
 
 
-def draw(widow, background, bg_image):
+def draw(widow, background, bg_image, player):
     for tile in background:
         widow.blit(bg_image, tile)
 
+    player.draw(window)
     pygame.display.update()
 
 
 def main(window):
     clock = pygame.time.Clock()
     background, bg_img = get_background("Purple.png")
+
+    player = Player(100, 100, 50, 50)
 
     run = True
 
@@ -53,7 +92,7 @@ def main(window):
                 run = False
                 break
 
-        draw(window, background, bg_img)
+        draw(window, background, bg_img, player)
 
 
 if __name__ == "__main__":
