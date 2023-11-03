@@ -166,29 +166,6 @@ def handle_move(player):
         player.move_right(PLAYER_VEL)
 
 
-def main(window):
-    clock = pygame.time.Clock()
-    background, bg_img = get_background("Purple.png")
-
-    block_size = 96
-    player = Player(100, 100, 50, 50)
-    blocks = [Block(0, HEIGHT - block_size, block_size)]
-
-    run = True
-
-    while run:
-        clock.tick(FPS)
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-                break
-
-        player.loop(FPS)
-        handle_move(player)
-        draw(window, background, bg_img, player, blocks)
-
-
 class Object(pygame.sprite.Sprite):
     def __init__(self, x, y, width, height, name=None):
         super().__init__()
@@ -208,6 +185,31 @@ class Block(Object):
         block = get_block(size)
         self.image.blit(block, (0, 0))
         self.mask = pygame.mask.from_surface(self.image)
+
+
+def main(window):
+    clock = pygame.time.Clock()
+    background, bg_img = get_background("Purple.png")
+
+    block_size = 96
+    player = Player(100, 100, 50, 50)
+    floor = [Block(i * block_size, HEIGHT - block_size, block_size) for i in
+             range(-WIDTH // block_size, WIDTH * 2 // block_size)]
+    # blocks = [Block(0, HEIGHT - block_size, block_size)]
+
+    run = True
+
+    while run:
+        clock.tick(FPS)
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+                break
+
+        player.loop(FPS)
+        handle_move(player)
+        draw(window, background, bg_img, player, floor)
 
 
 if __name__ == "__main__":
