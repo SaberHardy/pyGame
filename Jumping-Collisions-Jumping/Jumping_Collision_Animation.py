@@ -13,7 +13,7 @@ BG_COLOR = (255, 255, 255)
 
 WIDTH, HEIGHT = 1000, 600
 FPS = 60
-PLAYER_VEL = 4
+PLAYER_VEL = 6
 
 window = pygame.display.set_mode((WIDTH, HEIGHT))
 
@@ -111,11 +111,11 @@ class Player(pygame.sprite.Sprite):
 
         self.update_sprite()
 
-    def draw(self, window):
+    def draw(self, window, offset_x):
         # pygame.draw.rect(window, self.COLOR, self.rect)
 
         # self.sprite = self.SPRITES['idle_' + self.direction][0]
-        window.blit(self.sprite, (self.rect.x, self.rect.y))
+        window.blit(self.sprite, (self.rect.x - offset_x, self.rect.y))
 
     # update the rectangle that bounds the character based on the sprite that we're showing
     def update(self):
@@ -168,14 +168,14 @@ def get_background(name):
     return tiles, image
 
 
-def draw(widow, background, bg_image, player, objects):
+def draw(widow, background, bg_image, player, objects, offset_x):
     for tile in background:
         widow.blit(bg_image, tile)
 
     for obj in objects:
-        obj.draw(window)
+        obj.draw(window, offset_x)
 
-    player.draw(window)
+    player.draw(window, offset_x)
     pygame.display.update()
 
 
@@ -201,8 +201,8 @@ class Object(pygame.sprite.Sprite):
         self.height = height
         self.name = name
 
-    def draw(self, win):
-        win.blit(self.image, (self.rect.x, self.rect.y))
+    def draw(self, win, offset_x):
+        win.blit(self.image, (self.rect.x - offset_x, self.rect.y))
 
 
 class Block(Object):
@@ -231,6 +231,8 @@ def handle_vertical_collision(player, objects, dy):
 def main(window):
     clock = pygame.time.Clock()
     background, bg_img = get_background("Purple.png")
+    offset_x = 0
+    scroll_area_width = 200
 
     block_size = 96
     player = Player(100, 100, 50, 50)
@@ -254,7 +256,12 @@ def main(window):
 
         player.loop(FPS)
         handle_move(player, floor)
-        draw(window, background, bg_img, player, floor)
+        draw(window, background, bg_img, player, floor, offset_x)
+
+        #  checking if i'm moving to right
+        if (player.rect.right - offset_x >= WIDTH - scroll_area_width and player.x_val > 0) or \
+            (player.rect.left - offset_x <= scroll_area_width and player.x_val < 0):
+            offset_x += player.x_val
 
     pygame.quit()
     quit()
