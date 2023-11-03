@@ -3,7 +3,7 @@ import random
 import math
 import pygame
 from os import listdir
-from os.path import isfile, isdir, join
+from os.path import isfile, join
 
 pygame.init()
 
@@ -182,11 +182,13 @@ def draw(widow, background, bg_image, player, objects, offset_x):
 def handle_move(player, objects):
     keys = pygame.key.get_pressed()
     player.x_val = 0
+    collide_left = collide(player, objects, -PLAYER_VEL * 2)
+    collide_right = collide(player, objects, PLAYER_VEL * 2)
 
-    if keys[pygame.K_LEFT]:
+    if keys[pygame.K_LEFT] and not collide_left:
         player.move_left(PLAYER_VEL)
 
-    if keys[pygame.K_RIGHT]:
+    if keys[pygame.K_RIGHT] and not collide_right:
         player.move_right(PLAYER_VEL)
 
     handle_vertical_collision(player, objects, player.y_val)
@@ -226,6 +228,20 @@ def handle_vertical_collision(player, objects, dy):
 
         collided_objects.append(obj)
     return collided_objects
+
+
+def collide(player, objects, dx):
+    player.move(dx, 0)
+    player.update()
+    collided_obj = None
+    for obj in objects:
+        if pygame.sprite.collide_mask(player, obj):
+            collided_obj = obj
+            break
+    # move it back
+    player.move(-dx, 0)
+    player.update()
+    return collided_obj
 
 
 def main(window):
