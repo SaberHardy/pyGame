@@ -96,7 +96,7 @@ class Player(pygame.sprite.Sprite):
 
     # This will call once every frame
     def loop(self, fps):
-        # self.y_val += min(1, (self.fall_count / fps) * self.GRAVITY)
+        self.y_val += min(1, (self.fall_count / fps) * self.GRAVITY)
         # moving the item
         self.move(self.x_val, self.y_val)
         self.fall_count += 1
@@ -115,6 +115,15 @@ class Player(pygame.sprite.Sprite):
         # Do the mask: the masking is for mapping of all the pixels that exist in the Sprite
         # Any pixels perform on them perfect collision because we can overlap it with another mask
         self.mask = pygame.mask.from_surface(self.sprite)
+
+    def landed(self):
+        self.fall_count = 0
+        self.y_val = 0
+        self.jump_count = 0
+
+    def hit_head(self):
+        self.count = 0
+        self.y_val *= -1
 
     def update_sprite(self):
         sprite_sheet = 'idle'
@@ -155,7 +164,7 @@ def draw(widow, background, bg_image, player, objects):
     pygame.display.update()
 
 
-def handle_move(player):
+def handle_move(player, objects):
     keys = pygame.key.get_pressed()
     player.x_val = 0
 
@@ -164,6 +173,8 @@ def handle_move(player):
 
     if keys[pygame.K_RIGHT]:
         player.move_right(PLAYER_VEL)
+
+    handle_vertical_collision(player, objects, player.y_val)
 
 
 class Object(pygame.sprite.Sprite):
@@ -187,6 +198,21 @@ class Block(Object):
         self.mask = pygame.mask.from_surface(self.image)
 
 
+def handle_vertical_collision(player, objects, dy):
+    collided_objects = []
+    for obj in objects:
+        if pygame.sprite.collide_mask(player, obj):
+            if dy > 0:
+                player.rect.bottom = obj.rect.top
+                player.landed()
+            elif dy < 0:
+                player.rect.top = obj.rect.bottom
+                player.hit_head()
+
+        collided_objects.append(obj)
+    return collided_objects
+
+
 def main(window):
     clock = pygame.time.Clock()
     background, bg_img = get_background("Purple.png")
@@ -208,7 +234,7 @@ def main(window):
                 break
 
         player.loop(FPS)
-        handle_move(player)
+        handle_move(player, floor)
         draw(window, background, bg_img, player, floor)
 
 
