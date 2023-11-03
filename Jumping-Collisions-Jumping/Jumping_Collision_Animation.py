@@ -240,6 +240,10 @@ def main(window):
              range(-WIDTH // block_size, WIDTH * 2 // block_size)]
     # blocks = [Block(0, HEIGHT - block_size, block_size)]
 
+    objects = [*floor,
+               Block(0, HEIGHT - block_size * 2, block_size),
+               Block(block_size * 3, HEIGHT - block_size * 4, block_size)]
+
     run = True
 
     while run:
@@ -255,12 +259,12 @@ def main(window):
                     player.jump()
 
         player.loop(FPS)
-        handle_move(player, floor)
-        draw(window, background, bg_img, player, floor, offset_x)
+        handle_move(player, objects)
+        draw(window, background, bg_img, player, objects, offset_x)
 
         #  checking if i'm moving to right
         if (player.rect.right - offset_x >= WIDTH - scroll_area_width and player.x_val > 0) or \
-            (player.rect.left - offset_x <= scroll_area_width and player.x_val < 0):
+                (player.rect.left - offset_x <= scroll_area_width and player.x_val < 0):
             offset_x += player.x_val
 
     pygame.quit()
