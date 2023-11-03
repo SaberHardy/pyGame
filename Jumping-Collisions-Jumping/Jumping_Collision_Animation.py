@@ -215,6 +215,40 @@ class Block(Object):
         self.mask = pygame.mask.from_surface(self.image)
 
 
+class Fire(Object):
+    ANIMATION_DELAY = 3
+
+    def __init__(self, x, y, width, height):
+        super().__init__(x, y, width, height, "fire")
+        self.fire = load_sprite_sheets("Traps", "Fire", width, height)
+        # fire.on()
+        self.image = self.fire["off"][0]
+        self.mask = pygame.mask.from_surface(self.image)
+        self.animation_count = 0
+        self.animation_name = "off"
+
+    def on(self):
+        self.animation_name = "on"
+
+    def off(self):
+        self.animation_name = "off"
+
+    def loop(self):
+        # sprite_sheet_name = sprite_sheet + "_" + self.direction
+        sprites = self.fire[self.animation_name]
+        sprite_index = (self.animation_count // self.ANIMATION_DELAY) % len(sprites)
+        self.image = sprites[sprite_index]
+        self.animation_count += 1
+
+        self.rect = self.image.get_rect(topleft=(self.rect.x, self.rect.y))
+        # Do the mask: the masking is for mapping of all the pixels that exist in the Sprite
+        # Any pixels perform on them perfect collision because we can overlap it with another mask
+        self.mask = pygame.mask.from_surface(self.image)
+
+        if self.animation_count // self.ANIMATION_DELAY > len(sprites):
+            self.animation_count = 0
+
+
 def handle_vertical_collision(player, objects, dy):
     collided_objects = []
     for obj in objects:
@@ -252,13 +286,17 @@ def main(window):
 
     block_size = 96
     player = Player(100, 100, 50, 50)
-    floor = [Block(i * block_size, HEIGHT - block_size, block_size) for i in
-             range(-WIDTH // block_size, WIDTH * 2 // block_size)]
+
+    floor = [Block(i * block_size, HEIGHT - block_size, block_size)
+             for i in range(-WIDTH // block_size, (WIDTH * 2) // block_size)]
+    # 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
+    fire = Fire(100, HEIGHT - block_size - 64, 16, 32)
     # blocks = [Block(0, HEIGHT - block_size, block_size)]
 
+    fire.on()
     objects = [*floor,
                Block(0, HEIGHT - block_size * 2, block_size),
-               Block(block_size * 3, HEIGHT - block_size * 4, block_size)]
+               Block(block_size * 3, HEIGHT - block_size * 4, block_size), fire]
 
     run = True
 
@@ -275,6 +313,7 @@ def main(window):
                     player.jump()
 
         player.loop(FPS)
+        fire.loop()
         handle_move(player, objects)
         draw(window, background, bg_img, player, objects, offset_x)
 
