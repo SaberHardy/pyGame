@@ -47,6 +47,16 @@ def load_sprite_sheets(dir1, dir2, width, height, direction=False):
     return all_sprites
 
 
+def get_block(size):
+    path = join("assets", "Terrain", "Terrain.png")
+    image = pygame.image.load(path).convert_alpha()
+    surface = pygame.Surface((size, size), pygame.SRCALPHA, 32)
+    # the 98 in rect function is calculated from the top left of Terrain.png
+    rect = pygame.Rect(96, 0, size, size)
+    surface.blit(image, (0, 0), rect)
+    return pygame.transform.scale2x(surface)
+
+
 class Player(pygame.sprite.Sprite):
     COLOR = (255, 0, 0)
     GRAVITY = 1
@@ -58,6 +68,7 @@ class Player(pygame.sprite.Sprite):
     ANIMATION_DELAY = 5
 
     def __init__(self, x, y, width, height):
+        super().__init__()
         self.sprite = None
         self.rect = pygame.Rect(x, y, width, height)
         self.x_val = 0
@@ -133,9 +144,12 @@ def get_background(name):
     return tiles, image
 
 
-def draw(widow, background, bg_image, player):
+def draw(widow, background, bg_image, player, objects):
     for tile in background:
         widow.blit(bg_image, tile)
+
+    for obj in objects:
+        obj.draw(window)
 
     player.draw(window)
     pygame.display.update()
@@ -156,7 +170,9 @@ def main(window):
     clock = pygame.time.Clock()
     background, bg_img = get_background("Purple.png")
 
+    block_size = 96
     player = Player(100, 100, 50, 50)
+    blocks = [Block(0, HEIGHT - block_size, block_size)]
 
     run = True
 
@@ -170,7 +186,28 @@ def main(window):
 
         player.loop(FPS)
         handle_move(player)
-        draw(window, background, bg_img, player)
+        draw(window, background, bg_img, player, blocks)
+
+
+class Object(pygame.sprite.Sprite):
+    def __init__(self, x, y, width, height, name=None):
+        super().__init__()
+        self.rect = pygame.Rect(x, y, width, height)
+        self.image = pygame.Surface((width, height), pygame.SRCALPHA)
+        self.width = width
+        self.height = height
+        self.name = name
+
+    def draw(self, win):
+        win.blit(self.image, (self.rect.x, self.rect.y))
+
+
+class Block(Object):
+    def __init__(self, x, y, size):
+        super().__init__(x, y, size, size)
+        block = get_block(size)
+        self.image.blit(block, (0, 0))
+        self.mask = pygame.mask.from_surface(self.image)
 
 
 if __name__ == "__main__":
