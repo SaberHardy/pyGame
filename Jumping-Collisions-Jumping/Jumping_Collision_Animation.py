@@ -237,6 +237,9 @@ def main(window):
         handle_move(player, floor)
         draw(window, background, bg_img, player, floor)
 
+    pygame.quit()
+    quit()
+
 
 if __name__ == "__main__":
     main(window)
