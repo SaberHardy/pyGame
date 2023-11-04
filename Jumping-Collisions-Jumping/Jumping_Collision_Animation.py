@@ -1,6 +1,3 @@
-import os
-import random
-import math
 import pygame
 from os import listdir
 from os.path import isfile, join
@@ -69,6 +66,7 @@ class Player(pygame.sprite.Sprite):
 
     def __init__(self, x, y, width, height):
         super().__init__()
+        self.count = None
         self.sprite = None
         self.rect = pygame.Rect(x, y, width, height)
         self.x_val = 0
@@ -124,11 +122,11 @@ class Player(pygame.sprite.Sprite):
 
         self.update_sprite()
 
-    def draw(self, window, offset_x):
+    def draw(self, win, offset_x):
         # pygame.draw.rect(window, self.COLOR, self.rect)
 
         # self.sprite = self.SPRITES['idle_' + self.direction][0]
-        window.blit(self.sprite, (self.rect.x - offset_x, self.rect.y))
+        win.blit(self.sprite, (self.rect.x - offset_x, self.rect.y))
 
     # update the rectangle that bounds the character based on the sprite that we're showing
     def update(self):
@@ -173,7 +171,7 @@ class Player(pygame.sprite.Sprite):
 
 def get_background(name):
     image = pygame.image.load(join("assets", "Background", name))
-    X, Y, width, height = image.get_rect()
+    x, y, width, height = image.get_rect()
 
     tiles = []
 
@@ -300,7 +298,7 @@ def collide(player, objects, dx):
     return collided_obj
 
 
-def main(window):
+def main(wind):
     clock = pygame.time.Clock()
     background, bg_img = get_background("Purple.png")
     offset_x = 0
@@ -336,9 +334,9 @@ def main(window):
         player.loop(FPS)
         fire.loop()
         handle_move(player, objects)
-        draw(window, background, bg_img, player, objects, offset_x)
+        draw(wind, background, bg_img, player, objects, offset_x)
 
-        #  checking if i'm moving to right
+        #  checking if I'm moving to right
         if (player.rect.right - offset_x >= WIDTH - scroll_area_width and player.x_val > 0) or \
                 (player.rect.left - offset_x <= scroll_area_width and player.x_val < 0):
             offset_x += player.x_val
