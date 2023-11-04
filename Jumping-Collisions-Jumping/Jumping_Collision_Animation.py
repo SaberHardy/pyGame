@@ -78,6 +78,12 @@ class Player(pygame.sprite.Sprite):
         self.animation_count = 0
         self.fall_count = 0
         self.jump_count = 0
+        self.hit = False
+        self.hit_count = 0
+
+    def make_hit(self):
+        self.hit = True
+        self.hit_count = 0
 
     def jump(self):
         self.y_val = -self.GRAVITY * 8
@@ -107,6 +113,13 @@ class Player(pygame.sprite.Sprite):
         self.y_val += min(1, (self.fall_count / fps) * self.GRAVITY)
         # moving the item
         self.move(self.x_val, self.y_val)
+
+        if self.hit:
+            self.hit += 1
+        if self.hit_count > fps * 2:
+            self.hit = False
+            self.hit_count = 0
+
         self.fall_count += 1
 
         self.update_sprite()
@@ -135,6 +148,10 @@ class Player(pygame.sprite.Sprite):
 
     def update_sprite(self):
         sprite_sheet = 'idle'
+
+        if self.hit:
+            sprite_sheet = "hit"
+
         if self.y_val < 0:
             if self.jump_count == 1:
                 sprite_sheet = "jump"
@@ -191,7 +208,12 @@ def handle_move(player, objects):
     if keys[pygame.K_RIGHT] and not collide_right:
         player.move_right(PLAYER_VEL)
 
-    handle_vertical_collision(player, objects, player.y_val)
+    vertical_collie = handle_vertical_collision(player, objects, player.y_val)
+    to_check = [collide_left, collide_right, *vertical_collie]
+
+    for obj in to_check:
+        if obj and obj.name == "fire":
+            player.make_hit()
 
 
 class Object(pygame.sprite.Sprite):
@@ -260,7 +282,7 @@ def handle_vertical_collision(player, objects, dy):
                 player.rect.top = obj.rect.bottom
                 player.hit_head()
 
-        collided_objects.append(obj)
+            collided_objects.append(obj)
     return collided_objects
 
 
@@ -289,7 +311,6 @@ def main(window):
 
     floor = [Block(i * block_size, HEIGHT - block_size, block_size)
              for i in range(-WIDTH // block_size, (WIDTH * 2) // block_size)]
-    # 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
     fire = Fire(100, HEIGHT - block_size - 64, 16, 32)
     # blocks = [Block(0, HEIGHT - block_size, block_size)]
 
